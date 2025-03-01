@@ -8,6 +8,7 @@
 // except according to those terms.
 
 //! consts - Mathematical constants.
+//!
 //! Constants are available as f32 or f64.  
 //! They are the closest available floating point value to the true value.
 //!
@@ -16,7 +17,7 @@
 //! use fastmath::consts;
 //!
 //! // True value to 20 decimal digits:
-//! //                                2.41421356237309504880
+//! //                                        2.41421356237309504880
 //! assert_eq!(consts::double::SQRT_2_PLUS_1, 2.41421356237309492343);
 //! ```
 
