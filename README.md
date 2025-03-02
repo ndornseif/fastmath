@@ -4,7 +4,7 @@
 
 ## Description
 Bit level math functions, also includes mathematical constants.
-Optimized for size and performance. Only uses rust core no std library or other dependencies.
+Optimized for size and performance. Only uses rust core, no std library or other dependencies.
 
 ## License
 
