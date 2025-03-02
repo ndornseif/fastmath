@@ -19,7 +19,7 @@
 //! assert_eq!(log::u64_log2_floor(testval), 62);
 //!
 //! // Float imprecision causes the wrong value
-//! // to be returned for f64 (63 instead of 64).
+//! // to be returned for f64 (63 instead of 62).
 //! assert_eq!((testval as f64).log2().floor() as u32, 63);
 //! ```
 
