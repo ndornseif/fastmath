@@ -41,34 +41,44 @@ pub trait BaseInt:
     const ONE: Self;
     /// Number of bits in binary representation
     const BITS: u32;
+    /// Number of bits in binary representation minus 1
+    const BITS_M_1: u32;
+    /// Number of bits in binary representation minus 2
+    const BITS_M_2: u32;
     /// Largest representable value
     const MAX: Self;
     /// Smallest representable value
     const MIN: Self;
+    /// Masks of the MSB, signbit for signed types
+    const MSB: Self;
+    ///Shifts the bits to the right by a specified amount, n,
+    /// wrapping the truncated bits to the end of the resulting integer.
+    fn rotate_right(self, n: u32) -> Self;
+    ///Shifts the bits to the left by a specified amount, n,
+    /// wrapping the truncated bits to the end of the resulting integer.
+    fn rotate_left(self, n: u32) -> Self;
 }
 
 macro_rules! impl_type_const {
-    ($type:ty) => {
-        impl BaseInt for $type {
+    ($($type:ty),*) => {
+        $(impl BaseInt for $type {
             const ZERO: $type = 0;
             const ONE: $type = 1;
             const BITS: u32 = <$type>::BITS;
+            const BITS_M_1: u32 = <$type>::BITS - 1;
+            const BITS_M_2: u32 = <$type>::BITS - 2;
             const MAX: $type = <$type>::MAX;
             const MIN: $type = <$type>::MIN;
+            const MSB: $type = 1 << (<$type>::BITS - 1);
+            fn rotate_right(self, n: u32) -> Self {
+                self.rotate_right(n)
+            }
+            fn rotate_left(self, n: u32) -> Self {
+                self.rotate_left(n)
+            }
         }
-    };
+    )*};
 }
 
-impl_type_const!(u8);
-impl_type_const!(u16);
-impl_type_const!(u32);
-impl_type_const!(u64);
-impl_type_const!(u128);
-impl_type_const!(usize);
-
-impl_type_const!(i8);
-impl_type_const!(i16);
-impl_type_const!(i32);
-impl_type_const!(i64);
-impl_type_const!(i128);
-impl_type_const!(isize);
+impl_type_const!(u8, u16, u32, u64, u128, usize);
+impl_type_const!(i8, i16, i32, i64, i128, isize);
