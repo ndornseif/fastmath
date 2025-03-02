@@ -35,3 +35,4 @@
 pub mod consts;
 pub mod log;
 pub mod sign;
+pub mod traits;
