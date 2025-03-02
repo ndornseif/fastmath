@@ -15,9 +15,9 @@
 //!
 //! // Zero is a weak seed, but is internaly replaced with a strong default.
 //! let mut rn = rng::Lehmer64::new(0);
-//! assert_eq!(rn.next(), 0xb1a0a940b1f521c6u64);
-//! assert_eq!(rn.next(), 0xfb89a1facad9e645u64);
-//! assert_eq!(rn.next(), 0x064577751fa75998u64);
+//! assert_eq!(rn.rand_u64(), 0x064577751fa75998u64);
+//! assert_eq!(rn.rand_u64(), 0x2fffbd97d5f2f80au64);
+//! assert_eq!(rn.rand_u64(), 0x9981098d9584ad55u64);
 //! ```
 
 #[derive(Debug, Copy, Clone)]
@@ -32,17 +32,23 @@ impl Lehmer64 {
     /// Where the seed is the intial internal state.
     pub fn new(seed: u128) -> Self {
         // If seed is zero the generator only produces zeroes.
-        if seed == 0 {
+        let mut new_rng = if seed == 0 {
             Lehmer64 {
                 state: Lehmer64::DEFAULT_SEED,
             }
         } else {
             Lehmer64 { state: seed }
-        }
+        };
+        // Shuffle the internal state twice.
+        // This prevents the first value from being low
+        // if the seed was a small number.
+        let _ = new_rng.rand_u64();
+        let _ = new_rng.rand_u64();
+        new_rng
     }
 
     /// Generates a 'random' u64 and advances the generator state one step.
-    pub fn next(&mut self) -> u64 {
+    pub fn rand_u64(&mut self) -> u64 {
         self.state = self.state.wrapping_mul(0xda942042e4dd58b5);
         (self.state >> 64) as u64
     }
