@@ -13,7 +13,7 @@
 //! ```
 //! use fastmath::log;
 //!
-//! // Equivalent to 2**63 - 1
+//! // Equivalent to 2^63 - 1
 //! // = 9223372036854775807
 //! let testval: u64 = (1 << 63) - 1;
 //! assert_eq!(log::u64_log2_floor(testval), 62);
@@ -60,7 +60,7 @@ mod tests {
                     assert_eq!(
                         $testfn(prev_value),
                         exponent - 1,
-                        "Failed with x=2**{} - 1",
+                        "Failed with x=2^{} - 1",
                         exponent
                     );
 
@@ -68,7 +68,7 @@ mod tests {
                     assert_eq!(
                         $testfn(base_value),
                         exponent,
-                        "Failed with x=2**{}",
+                        "Failed with x=2^{}",
                         exponent
                     );
 
@@ -76,7 +76,7 @@ mod tests {
                     assert_eq!(
                         $testfn(next_value),
                         exponent,
-                        "Failed with x=2**{} + 1",
+                        "Failed with x=2^{} + 1",
                         exponent
                     );
                 }
