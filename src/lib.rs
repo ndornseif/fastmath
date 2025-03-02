@@ -7,9 +7,14 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! fastmath - Performance optimized math operations.
+//! # fastmath
+//! Performance optimized math operations.
 //!
-//! # Examples
+//! ## Description
+//! Bit level math functions, also includes mathematical constants.
+//! Optimized for size and performance. Only uses rust core, no std library or other dependencies.
+//!
+//! ## Examples
 //! ```
 //! use fastmath::{log, sign, consts};
 //!
@@ -34,5 +39,6 @@
 
 pub mod consts;
 pub mod log;
+pub mod rng;
 pub mod sign;
 pub mod traits;

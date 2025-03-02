@@ -1,0 +1,49 @@
+// fastmath - Various performance optimized math operations.
+// Copyright 2025 N. Dornseif
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+
+//! rng - Optimized RNG based on Lehmer64.
+//!
+//! # Examples
+//! ```
+//! use fastmath::rng;
+//!
+//! // Zero is a weak seed, but is internaly replaced with a strong default.
+//! let mut rn = rng::Lehmer64::new(0);
+//! assert_eq!(rn.next(), 0xb1a0a940b1f521c6u64);
+//! assert_eq!(rn.next(), 0xfb89a1facad9e645u64);
+//! assert_eq!(rn.next(), 0x064577751fa75998u64);
+//! ```
+
+#[derive(Debug, Copy, Clone)]
+/// Fast high quality LCG PRNG
+/// but NOT cryptographically secure.
+pub struct Lehmer64 {
+    state: u128,
+}
+impl Lehmer64 {
+    const DEFAULT_SEED: u128 = 0xfe1f873c7fc74fa65743b339f566f7bb;
+    /// Initalize a new RNG with the specified seed.
+    /// Where the seed is the intial internal state.
+    pub fn new(seed: u128) -> Self {
+        // If seed is zero the generator only produces zeroes.
+        if seed == 0 {
+            Lehmer64 {
+                state: Lehmer64::DEFAULT_SEED,
+            }
+        } else {
+            Lehmer64 { state: seed }
+        }
+    }
+
+    /// Generates a 'random' u64 and advances the generator state one step.
+    pub fn next(&mut self) -> u64 {
+        self.state = self.state.wrapping_mul(0xda942042e4dd58b5);
+        (self.state >> 64) as u64
+    }
+}
