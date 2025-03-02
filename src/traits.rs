@@ -39,6 +39,12 @@ pub trait BaseInt:
     const ZERO: Self;
     /// The literal 1.
     const ONE: Self;
+    /// Number of bits in binary representation
+    const BITS: u32;
+    /// Largest representable value
+    const MAX: Self;
+    /// Smallest representable value
+    const MIN: Self;
 }
 
 macro_rules! impl_type_const {
@@ -46,6 +52,9 @@ macro_rules! impl_type_const {
         impl BaseInt for $type {
             const ZERO: $type = 0;
             const ONE: $type = 1;
+            const BITS: u32 = <$type>::BITS;
+            const MAX: $type = <$type>::MAX;
+            const MIN: $type = <$type>::MIN;
         }
     };
 }
