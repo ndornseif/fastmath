@@ -41,7 +41,7 @@
 pub mod double {
     use core::mem::transmute;
 
-    /// One plus the square root of two, also known as the silver ratio. 
+    /// One plus the square root of two, also known as the silver ratio.
     /// The positive solution of the equation x^2 = 2x + 1.
     /// Exact double representation: 2.41421356237309492343001693370752036571502685546875
     pub const SQRT_2_PLUS_1: f64 = unsafe { transmute::<u64, f64>(0x4003504f333f9de6) };
@@ -60,7 +60,7 @@ pub mod double {
 
     /// The supersilver ratio. The real solution of the equation x^3 = 2x^2 + 1.  
     /// Exact double representation: 2.205569430400590391627702047117054462432861328125
-    pub const SUPERSIVLER_RATIO: f64 = unsafe { transmute::<u64, f64>(0x4001a50195e505e8) };
+    pub const SUPERSILVER_RATIO: f64 = unsafe { transmute::<u64, f64>(0x4001a50195e505e8) };
 }
 
 /// Single precision (f32) constants.
@@ -85,5 +85,5 @@ pub mod float {
 
     /// The supersilver ratio. The real solution of the equation x^3 = 2x^2 + 1.  
     /// Exact float representation: 2.2055695056915283203125
-    pub const SUPERSIVLER_RATIO: f32 = unsafe { transmute::<u32, f32>(0x400d280d) };
+    pub const SUPERSILVER_RATIO: f32 = unsafe { transmute::<u32, f32>(0x400d280d) };
 }
