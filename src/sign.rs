@@ -18,6 +18,9 @@
 //! assert_eq!(sign::isize_int_sign(isize::MIN), -1);
 //! assert_eq!(sign::i64_int_sign(0), 1);
 //! assert_eq!(sign::i128_int_sign(i128::MAX), 1);
+//!
+//! assert!(sign::int_opposite_sign(0, -1));
+//! assert!(sign::int_same_sign(0, 1));
 //! ```
 
 use crate::traits::BaseInt;
@@ -44,13 +47,15 @@ generic_int_sign!(i64_int_sign, i64);
 generic_int_sign!(i128_int_sign, i128);
 generic_int_sign!(isize_int_sign, isize);
 
-/// Generic sign comparison
+/// Returns true when x and y have opposite signs.
+/// Zero is considered positive.
 #[inline]
 pub fn int_opposite_sign<T: BaseInt>(x: T, y: T) -> bool {
     (x ^ y) < T::ZERO
 }
 
-/// Generic sign comparison
+/// Returns true when x and y have the same sign.
+/// Zero is considered positive.
 #[inline]
 pub fn int_same_sign<T: BaseInt>(x: T, y: T) -> bool {
     !int_opposite_sign(x, y)
