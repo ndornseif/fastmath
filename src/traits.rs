@@ -15,10 +15,24 @@ use core::{cmp, ops};
 pub trait BaseInt:
     Sized
     + ops::BitXor<Output = Self>
-    + ops::Add<Output = Self>
-    + ops::AddAssign
+    + ops::BitXorAssign
     + ops::BitAnd<Output = Self>
     + ops::BitAndAssign
+    + ops::BitOr<Output = Self>
+    + ops::BitOrAssign
+    + ops::Not<Output = Self>
+    + ops::Shl<Output = Self>
+    + ops::ShlAssign
+    + ops::Shr<Output = Self>
+    + ops::ShrAssign
+    + ops::Add<Output = Self>
+    + ops::AddAssign
+    + ops::Sub<Output = Self>
+    + ops::SubAssign
+    + ops::Mul<Output = Self>
+    + ops::MulAssign
+    + ops::Div<Output = Self>
+    + ops::DivAssign
     + cmp::PartialOrd
 {
     /// The literal 0.
@@ -28,24 +42,24 @@ pub trait BaseInt:
 }
 
 macro_rules! impl_type_const {
-    ($type:ty, $zero:expr, $one:expr) => {
+    ($type:ty) => {
         impl BaseInt for $type {
-            const ZERO: $type = $zero;
-            const ONE: $type = $one;
+            const ZERO: $type = 0;
+            const ONE: $type = 1;
         }
     };
 }
 
-impl_type_const!(u8, 0, 1);
-impl_type_const!(u16, 0, 1);
-impl_type_const!(u32, 0, 1);
-impl_type_const!(u64, 0, 1);
-impl_type_const!(u128, 0, 1);
-impl_type_const!(usize, 0, 1);
+impl_type_const!(u8);
+impl_type_const!(u16);
+impl_type_const!(u32);
+impl_type_const!(u64);
+impl_type_const!(u128);
+impl_type_const!(usize);
 
-impl_type_const!(i8, 0, 1);
-impl_type_const!(i16, 0, 1);
-impl_type_const!(i32, 0, 1);
-impl_type_const!(i64, 0, 1);
-impl_type_const!(i128, 0, 1);
-impl_type_const!(isize, 0, 1);
+impl_type_const!(i8);
+impl_type_const!(i16);
+impl_type_const!(i32);
+impl_type_const!(i64);
+impl_type_const!(i128);
+impl_type_const!(isize);
