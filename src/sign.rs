@@ -21,13 +21,12 @@
 //! ```
 
 /// Define a function for supplied datatype that
-/// returns 1 for positive integers, -1 for negative.  
-/// 0 is considered positive.  
+/// returns 1 if x > -1, -1 otherwise.
 macro_rules! generic_int_sign {
     ($fnname:ident, $datatype:ty) => {
         /// Returns the sign of a signed integer.
-        /// 1 if positive, -1 if negative.
-        /// 0 is considered positive.
+        /// 1 if x > -1, -1 otherwise.  
+        /// Behaviour similar to .signum() except zero is treated as positive.
         pub fn $fnname(x: $datatype) -> i8 {
             const SIGNBIT_MASK: $datatype = 1 << <$datatype>::BITS - 1;
             const RIGHT_SHIFT_AMOUNT: u32 = <$datatype>::BITS - 2;
@@ -42,6 +41,30 @@ generic_int_sign!(i32_int_sign, i32);
 generic_int_sign!(i64_int_sign, i64);
 generic_int_sign!(i128_int_sign, i128);
 generic_int_sign!(isize_int_sign, isize);
+
+macro_rules! generic_sign_comparison {
+    ($fnname_opposite:ident, $fnname_same:ident, $datatype:ty) => {
+        /// True if x and y have opposite signs.
+        /// Note that zero is considered positive.
+        pub fn $fnname_opposite(x: $datatype, y: $datatype) -> bool {
+            (x ^ y) < 0
+        }
+        /// True if x and y have the same sign.
+        /// Note that zero is considered positive.
+        pub fn $fnname_same(x: $datatype, y: $datatype) -> bool {
+            !$fnname_opposite(x, y)
+        }
+
+    };
+}
+
+generic_sign_comparison!(i8_opposite_sign, i8_same_sign, i8);
+generic_sign_comparison!(i16_opposite_sign, i16_same_sign, i16);
+generic_sign_comparison!(i32_opposite_sign, i32_same_sign, i32);
+generic_sign_comparison!(i64_opposite_sign, i64_same_sign, i64);
+generic_sign_comparison!(i128_opposite_sign, i128_same_sign, i128);
+generic_sign_comparison!(isize_opposite_sign, isize_same_sign, isize);
+
 
 #[cfg(test)]
 mod tests {
@@ -67,4 +90,30 @@ mod tests {
     test_int_sign!(i64, i64_int_sign, i64_int_sign_test);
     test_int_sign!(i128, i128_int_sign, i128_int_sign_test);
     test_int_sign!(isize, isize_int_sign, isize_int_sign_test);
+
+    /// Defines a test function for integer sign comparisons.
+    macro_rules! test_sign_comparison {
+        ($fnname_opposite:ident, $fnname_same:ident, $datatype:ty, $testname:ident) => {
+            #[test]
+            fn $testname() {
+                assert!($fnname_opposite(-1,0), "Failed opposite sign with x=-1, y=0");
+                assert!($fnname_opposite(-1,1), "Failed opposite sign with x=-1, y=1");
+                assert!(!$fnname_opposite(1,0), "Failed opposite sign withh x=1, y=0");
+                assert!(!$fnname_opposite(0,0), "Failed opposite sign with x=0, y=0");
+                assert!(!$fnname_opposite(<$datatype>::MAX,0), "Failed opposite sign with x=MAXINT, y=0");
+                assert!($fnname_opposite(<$datatype>::MIN,0), "Failed opposite sign with x=MININT, y=0");
+                assert!($fnname_opposite(<$datatype>::MIN,<$datatype>::MAX), "Failed opposite sign with x=MININT, y=MAXINT");
+
+                assert!(!$fnname_same(-1,0), "Failed same sign with x=-1, y=0");
+                assert!(!$fnname_same(-1,1), "Failed same sign with x=-1, y=1");
+                assert!($fnname_same(1,0), "Failed same sign withh x=1, y=0");
+                assert!($fnname_same(0,0), "Failed same sign with x=0, y=0");
+                assert!($fnname_same(<$datatype>::MAX,0), "Failed same sign with x=MAXINT, y=0");
+                assert!(!$fnname_same(<$datatype>::MIN,0), "Failed same sign with x=MININT, y=0");
+                assert!(!$fnname_same(<$datatype>::MIN,<$datatype>::MAX), "Failed same sign with x=MININT, y=MAXINT");
+            }
+        };
+    }
+    test_sign_comparison!(i8_opposite_sign, i8_same_sign, i8, i8_test_sign_comparison);
+
 }
