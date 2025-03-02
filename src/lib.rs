@@ -20,9 +20,9 @@
 //! assert_eq!(log::u64_log2_floor(testval), 62);
 //!
 //! // Sign examples
-//! assert_eq!(sign::isize_int_sign(isize::MIN), -1);
-//! assert_eq!(sign::i64_int_sign(0), 1);
-//! assert_eq!(sign::i128_int_sign(i128::MAX), 1);
+//! assert_eq!(sign::int_sign(isize::MIN), -1);
+//! assert_eq!(sign::int_sign(0i64), 1);
+//! assert_eq!(sign::int_sign(i128::MAX), 1);
 //!
 //! // Constant examples
 //! assert_eq!(consts::double::SQRT_2_PLUS_1, 2.41421356237309492343);

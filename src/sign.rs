@@ -13,11 +13,11 @@
 //! ```
 //! use fastmath::sign;
 //!
-//! assert_eq!(sign::i8_int_sign(-2), -1);
-//! assert_eq!(sign::i16_int_sign(1), 1);
-//! assert_eq!(sign::isize_int_sign(isize::MIN), -1);
-//! assert_eq!(sign::i64_int_sign(0), 1);
-//! assert_eq!(sign::i128_int_sign(i128::MAX), 1);
+//! assert_eq!(sign::int_sign(-2i8), -1);
+//! assert_eq!(sign::int_sign(1i16), 1);
+//! assert_eq!(sign::int_sign(0i64), 1);
+//! assert_eq!(sign::int_sign(i128::MAX), 1);
+//! assert_eq!(sign::int_sign(2usize), 1);
 //!
 //! assert!(sign::int_opposite_sign(0, -1));
 //! assert!(sign::int_same_sign(0, 1));
@@ -25,27 +25,12 @@
 
 use crate::traits::BaseInt;
 
-/// Define a function for supplied datatype that
-/// returns 1 if x > -1, -1 otherwise.
-macro_rules! generic_int_sign {
-    ($fnname:ident, $datatype:ty) => {
-        /// Returns the sign of a signed integer.
-        /// 1 if x > -1, -1 otherwise.
-        /// Behaviour similar to .signum() except zero is treated as positive.
-        pub fn $fnname(x: $datatype) -> i8 {
-            const SIGNBIT_MASK: $datatype = 1 << <$datatype>::BITS - 1;
-            const RIGHT_SHIFT_AMOUNT: u32 = <$datatype>::BITS - 2;
-            1 - (x & SIGNBIT_MASK).rotate_right(RIGHT_SHIFT_AMOUNT) as i8
-        }
-    };
+/// Returns the sign of a signed integer.
+/// 1 if x > -1, -1 otherwise.
+/// Behaviour similar to .signum() except zero is treated as positive.
+pub fn int_sign<T: BaseInt>(x: T) -> T {
+    T::ONE - (x & T::MSB).rotate_right(T::BITS_M_2)
 }
-
-generic_int_sign!(i8_int_sign, i8);
-generic_int_sign!(i16_int_sign, i16);
-generic_int_sign!(i32_int_sign, i32);
-generic_int_sign!(i64_int_sign, i64);
-generic_int_sign!(i128_int_sign, i128);
-generic_int_sign!(isize_int_sign, isize);
 
 /// Returns true when x and y have opposite signs.
 /// Zero is considered positive.
@@ -67,7 +52,7 @@ mod tests {
 
     /// Defines a test function for integer sign function.
     macro_rules! test_int_sign {
-        ($datatype:ty, $testfn:expr, $testname:ident) => {
+        ($testfn:expr, $datatype:ty, $testname:ident) => {
             #[test]
             fn $testname() {
                 assert_eq!($testfn(<$datatype>::MIN), -1, "Failed with x=MININT");
@@ -79,12 +64,12 @@ mod tests {
         };
     }
 
-    test_int_sign!(i8, i8_int_sign, i8_int_sign_test);
-    test_int_sign!(i16, i16_int_sign, i16_int_sign_test);
-    test_int_sign!(i32, i32_int_sign, i32_int_sign_test);
-    test_int_sign!(i64, i64_int_sign, i64_int_sign_test);
-    test_int_sign!(i128, i128_int_sign, i128_int_sign_test);
-    test_int_sign!(isize, isize_int_sign, isize_int_sign_test);
+    test_int_sign!(int_sign, i8, test_i8_int_sign);
+    test_int_sign!(int_sign, i16, test_i16_int_sign);
+    test_int_sign!(int_sign, i32, test_i32_int_sign);
+    test_int_sign!(int_sign, i64, test_i64_int_sign);
+    test_int_sign!(int_sign, i128, test_i128_int_sign);
+    test_int_sign!(int_sign, isize, test_isize_int_sign);
 
     /// Defines a test function for integer sign comparisons.
     macro_rules! test_sign_comparison {
