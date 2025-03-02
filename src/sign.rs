@@ -20,12 +20,14 @@
 //! assert_eq!(sign::i128_int_sign(i128::MAX), 1);
 //! ```
 
+use crate::traits::BaseInt;
+
 /// Define a function for supplied datatype that
 /// returns 1 if x > -1, -1 otherwise.
 macro_rules! generic_int_sign {
     ($fnname:ident, $datatype:ty) => {
         /// Returns the sign of a signed integer.
-        /// 1 if x > -1, -1 otherwise.  
+        /// 1 if x > -1, -1 otherwise.
         /// Behaviour similar to .signum() except zero is treated as positive.
         pub fn $fnname(x: $datatype) -> i8 {
             const SIGNBIT_MASK: $datatype = 1 << <$datatype>::BITS - 1;
@@ -42,29 +44,17 @@ generic_int_sign!(i64_int_sign, i64);
 generic_int_sign!(i128_int_sign, i128);
 generic_int_sign!(isize_int_sign, isize);
 
-macro_rules! generic_sign_comparison {
-    ($fnname_opposite:ident, $fnname_same:ident, $datatype:ty) => {
-        /// True if x and y have opposite signs.
-        /// Note that zero is considered positive.
-        pub fn $fnname_opposite(x: $datatype, y: $datatype) -> bool {
-            (x ^ y) < 0
-        }
-        /// True if x and y have the same sign.
-        /// Note that zero is considered positive.
-        pub fn $fnname_same(x: $datatype, y: $datatype) -> bool {
-            !$fnname_opposite(x, y)
-        }
-
-    };
+/// Generic sign comparison
+#[inline]
+pub fn int_opposite_sign<T: BaseInt>(x: T, y: T) -> bool {
+    (x ^ y) < T::ZERO
 }
 
-generic_sign_comparison!(i8_opposite_sign, i8_same_sign, i8);
-generic_sign_comparison!(i16_opposite_sign, i16_same_sign, i16);
-generic_sign_comparison!(i32_opposite_sign, i32_same_sign, i32);
-generic_sign_comparison!(i64_opposite_sign, i64_same_sign, i64);
-generic_sign_comparison!(i128_opposite_sign, i128_same_sign, i128);
-generic_sign_comparison!(isize_opposite_sign, isize_same_sign, isize);
-
+/// Generic sign comparison
+#[inline]
+pub fn int_same_sign<T: BaseInt>(x: T, y: T) -> bool {
+    !int_opposite_sign(x, y)
+}
 
 #[cfg(test)]
 mod tests {
@@ -93,27 +83,103 @@ mod tests {
 
     /// Defines a test function for integer sign comparisons.
     macro_rules! test_sign_comparison {
-        ($fnname_opposite:ident, $fnname_same:ident, $datatype:ty, $testname:ident) => {
+        ($fnname_same:ident, $fnname_opposite:ident, $datatype:ty, $testname:ident) => {
             #[test]
             fn $testname() {
-                assert!($fnname_opposite(-1,0), "Failed opposite sign with x=-1, y=0");
-                assert!($fnname_opposite(-1,1), "Failed opposite sign with x=-1, y=1");
-                assert!(!$fnname_opposite(1,0), "Failed opposite sign withh x=1, y=0");
-                assert!(!$fnname_opposite(0,0), "Failed opposite sign with x=0, y=0");
-                assert!(!$fnname_opposite(<$datatype>::MAX,0), "Failed opposite sign with x=MAXINT, y=0");
-                assert!($fnname_opposite(<$datatype>::MIN,0), "Failed opposite sign with x=MININT, y=0");
-                assert!($fnname_opposite(<$datatype>::MIN,<$datatype>::MAX), "Failed opposite sign with x=MININT, y=MAXINT");
+                assert!(
+                    $fnname_opposite(-1 as $datatype, 0 as $datatype),
+                    "Failed opposite sign with x=-1, y=0"
+                );
+                assert!(
+                    $fnname_opposite(-1 as $datatype, 1 as $datatype),
+                    "Failed opposite sign with x=-1, y=1"
+                );
+                assert!(
+                    !$fnname_opposite(1 as $datatype, 0 as $datatype),
+                    "Failed opposite sign withh x=1, y=0"
+                );
+                assert!(
+                    !$fnname_opposite(0 as $datatype, 0 as $datatype),
+                    "Failed opposite sign with x=0, y=0"
+                );
+                assert!(
+                    !$fnname_opposite(<$datatype>::MAX, 0 as $datatype),
+                    "Failed opposite sign with x=MAXINT, y=0"
+                );
+                assert!(
+                    $fnname_opposite(<$datatype>::MIN, 0 as $datatype),
+                    "Failed opposite sign with x=MININT, y=0"
+                );
+                assert!(
+                    $fnname_opposite(<$datatype>::MIN, <$datatype>::MAX),
+                    "Failed opposite sign with x=MININT, y=MAXINT"
+                );
 
-                assert!(!$fnname_same(-1,0), "Failed same sign with x=-1, y=0");
-                assert!(!$fnname_same(-1,1), "Failed same sign with x=-1, y=1");
-                assert!($fnname_same(1,0), "Failed same sign withh x=1, y=0");
-                assert!($fnname_same(0,0), "Failed same sign with x=0, y=0");
-                assert!($fnname_same(<$datatype>::MAX,0), "Failed same sign with x=MAXINT, y=0");
-                assert!(!$fnname_same(<$datatype>::MIN,0), "Failed same sign with x=MININT, y=0");
-                assert!(!$fnname_same(<$datatype>::MIN,<$datatype>::MAX), "Failed same sign with x=MININT, y=MAXINT");
+                assert!(
+                    !$fnname_same(-1 as $datatype, 0 as $datatype),
+                    "Failed same sign with x=-1, y=0"
+                );
+                assert!(
+                    !$fnname_same(-1 as $datatype, 1 as $datatype),
+                    "Failed same sign with x=-1, y=1"
+                );
+                assert!(
+                    $fnname_same(1 as $datatype, 0 as $datatype),
+                    "Failed same sign withh x=1, y=0"
+                );
+                assert!(
+                    $fnname_same(0 as $datatype, 0 as $datatype),
+                    "Failed same sign with x=0, y=0"
+                );
+                assert!(
+                    $fnname_same(<$datatype>::MAX, 0 as $datatype),
+                    "Failed same sign with x=MAXINT, y=0"
+                );
+                assert!(
+                    !$fnname_same(<$datatype>::MIN, 0 as $datatype),
+                    "Failed same sign with x=MININT, y=0"
+                );
+                assert!(
+                    !$fnname_same(<$datatype>::MIN, <$datatype>::MAX),
+                    "Failed same sign with x=MININT, y=MAXINT"
+                );
             }
         };
     }
-    test_sign_comparison!(i8_opposite_sign, i8_same_sign, i8, i8_test_sign_comparison);
-
+    test_sign_comparison!(
+        int_same_sign,
+        int_opposite_sign,
+        i8,
+        test_i8_sign_comparison
+    );
+    test_sign_comparison!(
+        int_same_sign,
+        int_opposite_sign,
+        i16,
+        test_i16_sign_comparison
+    );
+    test_sign_comparison!(
+        int_same_sign,
+        int_opposite_sign,
+        i32,
+        test_i32_sign_comparison
+    );
+    test_sign_comparison!(
+        int_same_sign,
+        int_opposite_sign,
+        i64,
+        test_i64_sign_comparison
+    );
+    test_sign_comparison!(
+        int_same_sign,
+        int_opposite_sign,
+        i128,
+        test_i128_sign_comparison
+    );
+    test_sign_comparison!(
+        int_same_sign,
+        int_opposite_sign,
+        isize,
+        test_isize_sign_comparison
+    );
 }
