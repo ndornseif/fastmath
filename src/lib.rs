@@ -33,8 +33,7 @@
 //! assert_eq!(consts::double::SQRT_2_PLUS_1, 2.41421356237309492343);
 //! ```
 
-#![warn(missing_docs)]
-#![warn(missing_debug_implementations)]
+#![warn(missing_docs, missing_debug_implementations, rust_2018_idioms)]
 #![no_std]
 
 pub mod consts;
