@@ -28,6 +28,7 @@ use crate::traits::BaseInt;
 /// Returns the sign of a signed integer.
 /// 1 if x > -1, -1 otherwise.
 /// Behaviour similar to .signum() except zero is treated as positive.
+#[inline]
 pub fn int_sign<T: BaseInt>(x: T) -> T {
     T::ONE - (x & T::MSB).rotate_right(T::BITS_M_2)
 }
