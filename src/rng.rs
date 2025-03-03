@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! rng - Optimized RNG based on Lehmer64.
+//! rng - Optimized RRNG.
 //!
 //! # Examples
 //! ```
@@ -15,9 +15,9 @@
 //!
 //! // Zero is a weak seed, but is internaly replaced with a strong default.
 //! let mut rn = rng::Lehmer64::new(0);
-//! assert_eq!(rn.rand_u64(), 0x064577751fa75998u64);
-//! assert_eq!(rn.rand_u64(), 0x2fffbd97d5f2f80au64);
-//! assert_eq!(rn.rand_u64(), 0x9981098d9584ad55u64);
+//! assert_eq!(rn.generate(), 0x064577751fa75998u64);
+//! assert_eq!(rn.generate(), 0x2fffbd97d5f2f80au64);
+//! assert_eq!(rn.generate(), 0x9981098d9584ad55u64);
 //! ```
 
 #[derive(Debug, Copy, Clone)]
@@ -28,6 +28,7 @@ pub struct Lehmer64 {
 }
 impl Lehmer64 {
     const DEFAULT_SEED: u128 = 0xfe1f873c7fc74fa65743b339f566f7bb;
+    const MUL_CONSTANT: u128 = 0xda942042e4dd58b5;
     /// Initalize a new RNG with the specified seed.
     /// Where the seed is the intial internal state.
     pub fn new(seed: u128) -> Self {
@@ -42,14 +43,14 @@ impl Lehmer64 {
         // Shuffle the internal state twice.
         // This prevents the first value from being low
         // if the seed was a small number.
-        let _ = new_rng.rand_u64();
-        let _ = new_rng.rand_u64();
+        let _ = new_rng.generate();
+        let _ = new_rng.generate();
         new_rng
     }
 
     /// Generates a 'random' u64 and advances the generator state one step.
-    pub fn rand_u64(&mut self) -> u64 {
-        self.state = self.state.wrapping_mul(0xda942042e4dd58b5);
+    pub fn generate(&mut self) -> u64 {
+        self.state = self.state.wrapping_mul(Lehmer64::MUL_CONSTANT);
         (self.state >> 64) as u64
     }
 }
