@@ -25,10 +25,9 @@ macro_rules! prepare_scratchpad {
     }};
 }
 
-macro_rules! make_singn_bench {
-    // Arguments are module name and function name of function to test bench
+macro_rules! make_sign_bench {
+    // Arguments are test type, test function name and test name.
     ($type:tt, $fn_name:ident, $test_name:expr) => {
-        // The macro will expand into the contents of this block.
         paste::item! {
             fn [< bench _ $fn_name >](pad: [$type; SCRATCHPAD_SIZE]) {
                 use fastmath::sign;
@@ -45,16 +44,16 @@ macro_rules! make_singn_bench {
     };
 }
 
-make_singn_bench!(i8, bench_i8_same_sign, "Benchmark int_same_sign for i8");
-make_singn_bench!(i16, bench_i16_same_sign, "Benchmark int_same_sign for i16");
-make_singn_bench!(i32, bench_i32_same_sign, "Benchmark int_same_sign for i32");
-make_singn_bench!(i64, bench_i64_same_sign, "Benchmark int_same_sign for i64");
-make_singn_bench!(
+make_sign_bench!(i8, bench_i8_same_sign, "Benchmark int_same_sign for i8");
+make_sign_bench!(i16, bench_i16_same_sign, "Benchmark int_same_sign for i16");
+make_sign_bench!(i32, bench_i32_same_sign, "Benchmark int_same_sign for i32");
+make_sign_bench!(i64, bench_i64_same_sign, "Benchmark int_same_sign for i64");
+make_sign_bench!(
     i128,
     bench_i128_same_sign,
     "Benchmark int_same_sign for i128"
 );
-make_singn_bench!(
+make_sign_bench!(
     isize,
     bench_isize_same_sign,
     "Benchmark int_same_sign for isize"
