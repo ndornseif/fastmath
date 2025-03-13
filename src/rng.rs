@@ -76,7 +76,7 @@ impl Lehmer64 {
         self.advance();
         let high_bits = self.state >> 64;
         self.advance();
-        high_bits << 64 | self.state >> 64
+        (high_bits << 64) | (self.state >> 64)
     }
 
     generic_generation_function!(generate_i8, i8);
@@ -92,7 +92,7 @@ impl Lehmer64 {
         self.advance();
         let high_bits = self.state >> 64;
         self.advance();
-        (high_bits << 64 | self.state >> 64) as i128
+        ((high_bits << 64) | (self.state >> 64)) as i128
     }
 
     /// Generate a 'random' f64 in the range [0; 1).  

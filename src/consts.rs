@@ -89,7 +89,7 @@ pub mod float {
 
     /// The supersilver ratio. The real solution of the equation x^3 = 2x^2 + 1.  
     /// Exact float representation: 2.2055695056915283203125
-    pub const SUPERSILVER_RATIO: f32 =f32::from_bits(0x400d280d);
+    pub const SUPERSILVER_RATIO: f32 = f32::from_bits(0x400d280d);
 
     /// One over 2 to the 53th power. Equivalent to 1.0 / (1u64 << 53) as f32.
     /// Exact double representation: 1.1102230246251565404236316680908203125E-16

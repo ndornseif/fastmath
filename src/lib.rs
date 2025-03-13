@@ -16,7 +16,7 @@
 //!
 //! ## Examples
 //! ```
-//! use fastmath::{log, sign, consts};
+//! use fastmath::{log, sign, consts, rng};
 //!
 //! // Log examples
 //! // Equivalent to 2**63 - 1
@@ -31,6 +31,10 @@
 //!
 //! // Constant examples
 //! assert_eq!(consts::double::SQRT_2_PLUS_1, 2.41421356237309492343);
+//!
+//! // Random number generator examples
+//! let mut rn = rng::Lehmer64::new(0);
+//! assert_eq!(rn.generate_u64(), 0x064577751fa75998u64);
 //! ```
 
 #![warn(missing_docs, missing_debug_implementations, rust_2018_idioms)]
