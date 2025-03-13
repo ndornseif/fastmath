@@ -20,6 +20,9 @@
 //! assert_eq!(rn.generate_isize(), -0x667ef6726a7b52abisize);
 //! ```
 
+use crate::consts::double::INV_2POW53;
+use crate::consts::float::INV_2POW24;
+
 /// Define a function that generates a random result of the specified datatype.
 macro_rules! generic_generation_function {
     ($fnname:ident, $datatype:ty) => {
@@ -90,6 +93,22 @@ impl Lehmer64 {
         let high_bits = self.state >> 64;
         self.advance();
         (high_bits << 64 | self.state >> 64) as i128
+    }
+
+    /// Generate a 'random' f64 in the range [0; 1).  
+    /// Has 53 bits of effective entropy 
+    /// and does not produce all possible values in the range.
+    #[inline]
+    pub fn generate_f64(&mut self) -> f64 {
+        (self.generate_u64() >> 11) as f64 * INV_2POW53
+    }
+
+    /// Generate a 'random' f32 in the range [0; 1).  
+    /// Has 24 bits of effective entropy 
+    /// and does not produce all possible values in the range.
+    #[inline]
+    pub fn generate_f32(&mut self) -> f32 {
+        (self.generate_u64() >> 40) as f32 * INV_2POW24
     }
 }
 
