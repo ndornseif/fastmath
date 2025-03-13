@@ -20,7 +20,6 @@
 //! assert_eq!(rn.generate_isize(), -0x667ef6726a7b52abisize);
 //! ```
 
-
 /// Define a function that generates a random result of the specified datatype.
 macro_rules! generic_generation_function {
     ($fnname:ident, $datatype:ty) => {
@@ -44,17 +43,10 @@ impl Lehmer64 {
     const MUL_CONSTANT: u128 = 0xda942042e4dd58b5;
     /// Initalize a new RNG with the specified seed.  
     /// Where the seed is the intial internal state.  
-    /// Note that if zero is used as the seed the generator only produces zeroes.  
-    /// To avoid this the provided seed is checked and replaced with the randomly
-    /// chosen default 0xfe1f873c7fc74fa65743b339f566f7bb if it is zero.
+    /// If the seed is zero, it is replaced with a predefined strong default.
     pub fn new(seed: u128) -> Self {
-        let mut new_rng = if seed == 0 {
-            Lehmer64 {
-                state: Lehmer64::DEFAULT_SEED,
-            }
-        } else {
-            Lehmer64 { state: seed }
-        };
+        let state = if seed == 0 { Self::DEFAULT_SEED } else { seed };
+        let mut new_rng = Lehmer64 { state };
         // Shuffle the internal state twice.
         // This prevents the first value from being low if the seed was a small number.
         new_rng.advance();
@@ -73,7 +65,7 @@ impl Lehmer64 {
     generic_generation_function!(generate_u32, u32);
     generic_generation_function!(generate_u64, u64);
     generic_generation_function!(generate_usize, usize);
-    
+
     // We define a seperate function for 128bit datatypes since they need two generator steps.
     /// Generates a 'random' u128 and advances the generator state two steps.
     #[inline]
@@ -81,7 +73,7 @@ impl Lehmer64 {
         self.advance();
         let high_bits = self.state >> 64;
         self.advance();
-        ((high_bits as u128) << 64) | ((self.state >> 64) as u128)
+        high_bits << 64 | self.state >> 64
     }
 
     generic_generation_function!(generate_i8, i8);
@@ -97,11 +89,9 @@ impl Lehmer64 {
         self.advance();
         let high_bits = self.state >> 64;
         self.advance();
-        ((high_bits as i128) << 64) | ((self.state >> 64) as i128)
+        (high_bits << 64 | self.state >> 64) as i128
     }
-
 }
-
 
 #[cfg(test)]
 mod tests {
