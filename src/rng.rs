@@ -15,10 +15,22 @@
 //!
 //! // Zero is a weak seed, but is internaly replaced with a strong default.
 //! let mut rn = rng::Lehmer64::new(0);
-//! assert_eq!(rn.generate(), 0x064577751fa75998u64);
-//! assert_eq!(rn.generate(), 0x2fffbd97d5f2f80au64);
-//! assert_eq!(rn.generate(), 0x9981098d9584ad55u64);
+//! assert_eq!(rn.generate_u64(), 0x064577751fa75998u64);
+//! assert_eq!(rn.generate_u8(), 0x0au8);
+//! assert_eq!(rn.generate_isize(), -0x667ef6726a7b52abisize);
 //! ```
+
+
+/// Define a function that generates a random result of the specified datatype.
+macro_rules! generic_generation_function {
+    ($fnname:ident, $datatype:ty) => {
+        /// Generates a 'random' integer and advances the generator state one step.
+        pub fn $fnname(&mut self) -> $datatype {
+            self.advance();
+            (self.state >> 64) as $datatype
+        }
+    };
+}
 
 #[derive(Debug, Copy, Clone)]
 /// Fast high quality LCG PRNG
@@ -43,14 +55,28 @@ impl Lehmer64 {
         // Shuffle the internal state twice.
         // This prevents the first value from being low
         // if the seed was a small number.
-        let _ = new_rng.generate();
-        let _ = new_rng.generate();
+        let _ = new_rng.advance();
+        let _ = new_rng.advance();
         new_rng
     }
 
-    /// Generates a 'random' u64 and advances the generator state one step.
-    pub fn generate(&mut self) -> u64 {
+    /// Advances the generator state one step.
+    #[inline(always)]
+    fn advance(&mut self) {
         self.state = self.state.wrapping_mul(Lehmer64::MUL_CONSTANT);
-        (self.state >> 64) as u64
     }
+
+    generic_generation_function!(generate_u8, u8);
+    generic_generation_function!(generate_u16, u16);
+    generic_generation_function!(generate_u32, u32);
+    generic_generation_function!(generate_u64, u64);
+    generic_generation_function!(generate_usize, usize);
+
+
+    generic_generation_function!(generate_i8, i8);
+    generic_generation_function!(generate_i16, i16);
+    generic_generation_function!(generate_i32, i32);
+    generic_generation_function!(generate_i64, i64);
+    generic_generation_function!(generate_isize, isize);
+
 }
