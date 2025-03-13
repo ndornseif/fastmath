@@ -96,7 +96,7 @@ impl Lehmer64 {
     }
 
     /// Generate a 'random' f64 in the range [0; 1).  
-    /// Has 53 bits of effective entropy 
+    /// Has 53 bits of effective entropy
     /// and does not produce all possible values in the range.
     #[inline]
     pub fn generate_f64(&mut self) -> f64 {
@@ -104,7 +104,7 @@ impl Lehmer64 {
     }
 
     /// Generate a 'random' f32 in the range [0; 1).  
-    /// Has 24 bits of effective entropy 
+    /// Has 24 bits of effective entropy
     /// and does not produce all possible values in the range.
     #[inline]
     pub fn generate_f32(&mut self) -> f32 {

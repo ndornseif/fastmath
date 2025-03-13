@@ -63,12 +63,12 @@ pub mod double {
     pub const SUPERSILVER_RATIO: f64 = unsafe { transmute::<u64, f64>(0x4001a50195e505e8) };
 
     /// One over 2 to the 53th power. Equivalent to 1.0 / (1u64 << 53) as f64.
-    /// Exact double representation: 1.1102230246251565404236316680908203125E-16 
-    pub const INV_2POW53: f64 = unsafe { transmute::<u64, f64>(0x3ca0000000000000)};
+    /// Exact double representation: 1.1102230246251565404236316680908203125E-16
+    pub const INV_2POW53: f64 = unsafe { transmute::<u64, f64>(0x3ca0000000000000) };
 
     /// One over 2 to the 24th power. Equivalent to 1.0 / (1u64 << 24) as f64.
-    /// Exact double representation:  5.9604644775390625E-8 
-    pub const INV_2POW24: f64 = unsafe { transmute::<u64, f64>(0x3e70000000000000)};
+    /// Exact double representation: 5.9604644775390625E-8
+    pub const INV_2POW24: f64 = unsafe { transmute::<u64, f64>(0x3e70000000000000) };
 }
 
 /// Single precision (f32) constants.
@@ -96,10 +96,10 @@ pub mod float {
     pub const SUPERSILVER_RATIO: f32 = unsafe { transmute::<u32, f32>(0x400d280d) };
 
     /// One over 2 to the 53th power. Equivalent to 1.0 / (1u64 << 53) as f32.
-    /// Exact double representation:  1.1102230246251565404236316680908203125E-16
-    pub const INV_2POW53: f32 = unsafe { transmute::<u32, f32>(0x25000000)};
+    /// Exact double representation: 1.1102230246251565404236316680908203125E-16
+    pub const INV_2POW53: f32 = unsafe { transmute::<u32, f32>(0x25000000) };
 
     /// One over 2 to the 24th power. Equivalent to 1.0 / (1u64 << 24) as f32.
-    /// Exact double representation:   5.9604644775390625E-8 
-    pub const INV_2POW24: f32 = unsafe { transmute::<u32, f32>(0x33800000)};
+    /// Exact double representation: 5.9604644775390625E-8
+    pub const INV_2POW24: f32 = unsafe { transmute::<u32, f32>(0x33800000) };
 }
