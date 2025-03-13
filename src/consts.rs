@@ -40,7 +40,7 @@
 /// Double precision (f64) constants.
 pub mod double {
     /// One plus the square root of two, also known as the silver ratio.
-    /// The positive solution of the equation x^2 = 2x + 1.
+    /// The positive solution of the equation x^2 = 2x + 1.  
     /// Exact double representation: 2.41421356237309492343001693370752036571502685546875
     pub const SQRT_2_PLUS_1: f64 = f64::from_bits(0x4003504f333f9de6);
 
@@ -60,11 +60,11 @@ pub mod double {
     /// Exact double representation: 2.205569430400590391627702047117054462432861328125
     pub const SUPERSILVER_RATIO: f64 = f64::from_bits(0x4001a50195e505e8);
 
-    /// One over 2 to the 53th power. Equivalent to 1.0 / (1u64 << 53) as f64.
+    /// One over 2 to the 53th power. Equivalent to 1.0 / (1u64 << 53) as f64.  
     /// Exact double representation: 1.1102230246251565404236316680908203125E-16
     pub const INV_2POW53: f64 = f64::from_bits(0x3ca0000000000000);
 
-    /// One over 2 to the 24th power. Equivalent to 1.0 / (1u64 << 24) as f64.
+    /// One over 2 to the 24th power. Equivalent to 1.0 / (1u64 << 24) as f64.  
     /// Exact double representation: 5.9604644775390625E-8
     pub const INV_2POW24: f64 = f64::from_bits(0x3e70000000000000);
 }
@@ -91,11 +91,11 @@ pub mod float {
     /// Exact float representation: 2.2055695056915283203125
     pub const SUPERSILVER_RATIO: f32 = f32::from_bits(0x400d280d);
 
-    /// One over 2 to the 53th power. Equivalent to 1.0 / (1u64 << 53) as f32.
+    /// One over 2 to the 53th power. Equivalent to 1.0 / (1u64 << 53) as f32.  
     /// Exact double representation: 1.1102230246251565404236316680908203125E-16
     pub const INV_2POW53: f32 = f32::from_bits(0x25000000);
 
-    /// One over 2 to the 24th power. Equivalent to 1.0 / (1u64 << 24) as f32.
+    /// One over 2 to the 24th power. Equivalent to 1.0 / (1u64 << 24) as f32.  
     /// Exact double representation: 5.9604644775390625E-8
     pub const INV_2POW24: f32 = f32::from_bits(0x33800000);
 }
