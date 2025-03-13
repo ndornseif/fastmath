@@ -95,7 +95,8 @@ impl Lehmer64 {
         ((high_bits << 64) | (self.state >> 64)) as i128
     }
 
-    /// Generate a 'random' f64 in the range [0; 1).  
+    /// Generate a 'random' f64 in the range [0; 1)
+    /// and advances the generator state one step.  
     /// Has 53 bits of effective entropy
     /// and does not produce all possible values in the range.
     #[inline]
@@ -103,12 +104,19 @@ impl Lehmer64 {
         (self.generate_u64() >> 11) as f64 * INV_2POW53
     }
 
-    /// Generate a 'random' f32 in the range [0; 1).  
+    /// Generate a 'random' f32 in the range [0; 1)
+    /// and advances the generator state one step.  
     /// Has 24 bits of effective entropy
     /// and does not produce all possible values in the range.
     #[inline]
     pub fn generate_f32(&mut self) -> f32 {
         (self.generate_u64() >> 40) as f32 * INV_2POW24
+    }
+
+    /// Generate a 'random' boolean and advances the generator state one step.
+    #[inline]
+    pub fn generate_bool(&mut self) -> bool {
+        self.generate_u8() & 1 == 0
     }
 }
 
