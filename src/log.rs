@@ -21,6 +21,7 @@
 //! // Float imprecision causes the wrong value
 //! // to be returned for f64 (63 instead of 62).
 //! assert_eq!((testval as f64).log2().floor() as u32, 63);
+//! assert_eq!(testval.ilog2(), 62u32);
 //! ```
 
 /// Define a function for supplied datatype that is equivalent to floor(log2(x)).

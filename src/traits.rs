@@ -51,12 +51,14 @@ pub trait BaseInt:
     const MIN: Self;
     /// Masks of the MSB, signbit for signed types
     const MSB: Self;
-    ///Shifts the bits to the right by a specified amount, n,
+    /// Shifts the bits to the right by a specified amount, n,
     /// wrapping the truncated bits to the end of the resulting integer.
     fn rotate_right(self, n: u32) -> Self;
-    ///Shifts the bits to the left by a specified amount, n,
+    /// Shifts the bits to the left by a specified amount, n,
     /// wrapping the truncated bits to the end of the resulting integer.
     fn rotate_left(self, n: u32) -> Self;
+    /// Performs primitive typecast from u64 to T.
+    fn from_u64(n: u64) -> Self;
 }
 
 macro_rules! impl_type_const {
@@ -70,11 +72,17 @@ macro_rules! impl_type_const {
             const MAX: $type = <$type>::MAX;
             const MIN: $type = <$type>::MIN;
             const MSB: $type = 1 << (<$type>::BITS - 1);
+            #[inline]
             fn rotate_right(self, n: u32) -> Self {
                 self.rotate_right(n)
             }
+            #[inline]
             fn rotate_left(self, n: u32) -> Self {
                 self.rotate_left(n)
+            }
+            #[inline]
+            fn from_u64(n: u64) -> Self {
+                n as $type
             }
         }
     )*};

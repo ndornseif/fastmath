@@ -13,39 +13,62 @@
 //! ```
 //! use fastmath::sign;
 //!
-//! assert_eq!(sign::int_sign(-2i8), -1);
-//! assert_eq!(sign::int_sign(1i16), 1);
-//! assert_eq!(sign::int_sign(0i64), 1);
-//! assert_eq!(sign::int_sign(i128::MAX), 1);
-//! assert_eq!(sign::int_sign(2usize), 1);
+//! assert_eq!(sign::int_sign_i8(-2), -1);
+//! assert_eq!(sign::int_sign_i16(1), 1);
+//! assert_eq!(sign::int_sign_i64(0), 1);
+//! assert_eq!(sign::int_sign_i128(i128::MAX), 1);
 //!
-//! assert!(sign::int_opposite_sign(0, -1));
-//! assert!(sign::int_same_sign(0, 1));
+//! assert!(sign::int_opposite_sign_i8(0, -1));
+//! assert!(sign::int_same_sign_isize(0, 1));
 //! ```
 
-use crate::traits::BaseInt;
-
-/// Returns the sign of a signed integer.
-/// 1 if x > -1, -1 otherwise.
-/// Behaviour similar to .signum() except zero is treated as positive.
-#[inline]
-pub fn int_sign<T: BaseInt>(x: T) -> T {
-    T::ONE - (x & T::MSB).rotate_right(T::BITS_M_2)
+/// Define a function that returns the sign of a signed integer.
+macro_rules! generic_sign_function {
+    ($fnname:ident, $datatype:ty) => {
+        /// Returns the sign of a signed integer.
+        /// 1 if x > -1, -1 otherwise.
+        /// Behaviour similar to .signum() except zero is treated as positive.
+        #[inline]
+        pub fn $fnname(x: $datatype) -> $datatype {
+            const MSB_MASK: $datatype = 1 << (<$datatype>::BITS - 1);
+            const BITS_M_2: u32 = <$datatype>::BITS - 2;
+            1 - (x & MSB_MASK).rotate_right(BITS_M_2)
+        }
+    };
 }
 
-/// Returns true when x and y have opposite signs.
-/// Zero is considered positive.
-#[inline]
-pub fn int_opposite_sign<T: BaseInt>(x: T, y: T) -> bool {
-    (x ^ y) < T::ZERO
+generic_sign_function!(int_sign_i8, i8);
+generic_sign_function!(int_sign_i16, i16);
+generic_sign_function!(int_sign_i32, i32);
+generic_sign_function!(int_sign_i64, i64);
+generic_sign_function!(int_sign_i128, i128);
+generic_sign_function!(int_sign_isize, isize);
+
+/// Define a function that returns true if both supplied ints have opposite signs.
+macro_rules! generic_sign_comparison_functions {
+    ($fnname_opposite:ident, $fnname_same:ident, $datatype:ty) => {
+        /// Returns true when x and y have opposite signs.
+        /// Zero is considered positive.
+        #[inline]
+        pub fn $fnname_opposite(x: $datatype, y: $datatype) -> bool {
+            (x ^ y) < 0
+        }
+
+        /// Returns true when x and y have the same sign.
+        /// Zero is considered positive.
+        #[inline]
+        pub fn $fnname_same(x: $datatype, y: $datatype) -> bool {
+            !$fnname_opposite(x, y)
+        }
+    };
 }
 
-/// Returns true when x and y have the same sign.
-/// Zero is considered positive.
-#[inline]
-pub fn int_same_sign<T: BaseInt>(x: T, y: T) -> bool {
-    !int_opposite_sign(x, y)
-}
+generic_sign_comparison_functions!(int_opposite_sign_i8, int_same_sign_i8, i8);
+generic_sign_comparison_functions!(int_opposite_sign_i16, int_same_sign_i16, i16);
+generic_sign_comparison_functions!(int_opposite_sign_i32, int_same_sign_i32, i32);
+generic_sign_comparison_functions!(int_opposite_sign_i64, int_same_sign_i64, i64);
+generic_sign_comparison_functions!(int_opposite_sign_i128, int_same_sign_i128, i128);
+generic_sign_comparison_functions!(int_opposite_sign_isize, int_same_sign_isize, isize);
 
 #[cfg(test)]
 mod tests {
@@ -65,12 +88,12 @@ mod tests {
         };
     }
 
-    test_int_sign!(int_sign, i8, test_i8_int_sign);
-    test_int_sign!(int_sign, i16, test_i16_int_sign);
-    test_int_sign!(int_sign, i32, test_i32_int_sign);
-    test_int_sign!(int_sign, i64, test_i64_int_sign);
-    test_int_sign!(int_sign, i128, test_i128_int_sign);
-    test_int_sign!(int_sign, isize, test_isize_int_sign);
+    test_int_sign!(int_sign_i8, i8, test_i8_int_sign);
+    test_int_sign!(int_sign_i16, i16, test_i16_int_sign);
+    test_int_sign!(int_sign_i32, i32, test_i32_int_sign);
+    test_int_sign!(int_sign_i64, i64, test_i64_int_sign);
+    test_int_sign!(int_sign_i128, i128, test_i128_int_sign);
+    test_int_sign!(int_sign_isize, isize, test_isize_int_sign);
 
     /// Defines a test function for integer sign comparisons.
     macro_rules! test_sign_comparison {
@@ -138,38 +161,38 @@ mod tests {
         };
     }
     test_sign_comparison!(
-        int_same_sign,
-        int_opposite_sign,
+        int_same_sign_i8,
+        int_opposite_sign_i8,
         i8,
         test_i8_sign_comparison
     );
     test_sign_comparison!(
-        int_same_sign,
-        int_opposite_sign,
+        int_same_sign_i16,
+        int_opposite_sign_i16,
         i16,
         test_i16_sign_comparison
     );
     test_sign_comparison!(
-        int_same_sign,
-        int_opposite_sign,
+        int_same_sign_i32,
+        int_opposite_sign_i32,
         i32,
         test_i32_sign_comparison
     );
     test_sign_comparison!(
-        int_same_sign,
-        int_opposite_sign,
+        int_same_sign_i64,
+        int_opposite_sign_i64,
         i64,
         test_i64_sign_comparison
     );
     test_sign_comparison!(
-        int_same_sign,
-        int_opposite_sign,
+        int_same_sign_i128,
+        int_opposite_sign_i128,
         i128,
         test_i128_sign_comparison
     );
     test_sign_comparison!(
-        int_same_sign,
-        int_opposite_sign,
+        int_same_sign_isize,
+        int_opposite_sign_isize,
         isize,
         test_isize_sign_comparison
     );

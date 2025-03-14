@@ -15,9 +15,13 @@
 //!
 //! // Zero is a weak seed, but is internaly replaced with a strong default.
 //! let mut rn = rng::Lehmer64::new(0);
-//! assert_eq!(rn.generate_u64(), 0x064577751fa75998u64);
-//! assert_eq!(rn.generate_u8(), 0x0au8);
-//! assert_eq!(rn.generate_isize(), -0x667ef6726a7b52abisize);
+//! assert_eq!(rn.generate_u64(), 0x064577751fa75998);
+//! assert_eq!(rn.generate_u8(), 0x0a);
+//! assert_eq!(rn.generate_isize(), -0x667ef6726a7b52ab);
+//! assert_eq!(rn.generate_f32(), 0.23217541);
+//! assert_eq!(rn.generate_bool(), false);
+//! assert_eq!(rn.generate_any_f64(), 3.428784964555128e56);
+//! assert_eq!(rn.generate_weighted_bool(0.95), true);
 //! ```
 
 use crate::consts::double::INV_2POW53;
@@ -60,7 +64,7 @@ impl Lehmer64 {
     /// Advances the generator state one step.
     #[inline(always)]
     fn advance(&mut self) {
-        self.state = self.state.wrapping_mul(Lehmer64::MUL_CONSTANT);
+        self.state = self.state.wrapping_mul(Self::MUL_CONSTANT);
     }
 
     generic_generation_function!(generate_u8, u8);
@@ -95,7 +99,7 @@ impl Lehmer64 {
         ((high_bits << 64) | (self.state >> 64)) as i128
     }
 
-    /// Generate a 'random' f64 in the range [0; 1)
+    /// Generates a 'random' f64 in the range [0; 1)
     /// and advances the generator state one step.  
     /// Has 53 bits of effective entropy
     /// and does not produce all possible values in the range.
@@ -104,19 +108,42 @@ impl Lehmer64 {
         (self.generate_u64() >> 11) as f64 * INV_2POW53
     }
 
-    /// Generate a 'random' f32 in the range [0; 1)
+    /// Generates a 'random' f32 in the range [0; 1)
     /// and advances the generator state one step.  
     /// Has 24 bits of effective entropy
     /// and does not produce all possible values in the range.
     #[inline]
     pub fn generate_f32(&mut self) -> f32 {
-        (self.generate_u64() >> 40) as f32 * INV_2POW24
+        (self.generate_u32() >> 8) as f32 * INV_2POW24
     }
 
-    /// Generate a 'random' boolean and advances the generator state one step.
+    /// Generates a 'random' boolean and advances the generator state one step.  
+    /// Where the distribution of true and false is 50/50.
     #[inline]
     pub fn generate_bool(&mut self) -> bool {
-        self.generate_u8() & 1 == 0
+        self.generate_u8() & 1 != 0
+    }
+
+    /// Generate a 'random'  f64 that can take any possible value, including NaN, inf, ect.  
+    /// Advances the generator one step.
+    #[inline]
+    pub fn generate_any_f64(&mut self) -> f64 {
+        f64::from_bits(self.generate_u64())
+    }
+
+    /// Generate a 'random' f32 that can take any possible value, including NaN, inf, ect.  
+    /// Advances the generator one step.
+    #[inline]
+    pub fn generate_any_f32(&mut self) -> f32 {
+        f32::from_bits(self.generate_u32())
+    }
+
+    /// Generate a 'random' bool with a specified chance of being true.
+    /// Where chances are expressed as fractions of one. E.g 0.75 is 75 %  
+    /// Advances the generator one step.
+    #[inline]
+    pub fn generate_weighted_bool(&mut self, chance: f32) -> bool {
+        self.generate_f32() < chance
     }
 }
 
@@ -129,15 +156,16 @@ mod tests {
         let mut rn = Lehmer64::new(0);
         let full_integer = rn.generate_u128();
 
-        // Reset the generator state here.
+        // Reset the generator state.
         let mut rn = Lehmer64::new(0);
         assert_eq!((full_integer >> 64) as u64, rn.generate_u64());
         assert_eq!(full_integer as u64, rn.generate_u64());
 
+        //Repeat same test for i128
         let mut rn = Lehmer64::new(0);
         let full_integer = rn.generate_i128();
 
-        // Reset the generator state here.
+        // Reset the generator state.
         let mut rn = Lehmer64::new(0);
         assert_eq!((full_integer >> 64) as i64, rn.generate_i64());
         assert_eq!(full_integer as i64, rn.generate_i64());
